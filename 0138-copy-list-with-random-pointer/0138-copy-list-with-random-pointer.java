@@ -16,22 +16,43 @@ class Node {
 class Solution {
     public Node copyRandomList(Node head) {
         
-         // deep copy
-        HashMap<Node, Node> map = new HashMap<>();
-        
+        // deep copy
         Node curr = head;
         while(curr != null){
-            map.put(curr, new Node(curr.val));
-            curr = curr.next;
+            Node node = new Node(curr.val);
+            
+            node.next = curr.next;
+            curr.next = node;
+            curr = curr.next.next;
         }
-
+        
+        // random pointer
         curr = head;
-        Node nHead = curr;
         while(curr != null){
-            map.get(curr).next = curr.next != null ? map.get(curr.next): null;
-            map.get(curr).random = curr.random != null ? map.get(curr.random) : null;
-            curr = curr.next;
+            curr.next.random = curr.random != null ? curr.random.next : null;
+            curr = curr.next.next;
+            
         }
-        return map.get(head);
+        
+        // remove original one
+        Node dummy = new Node(0);
+        
+        curr = head;
+        Node temp = dummy;
+        Node fast;
+        
+        while(curr != null){
+            fast = curr.next.next;
+            temp.next = curr.next;
+            curr.next = fast;
+            temp = temp.next;
+            curr = fast;
+
+        }
+        return dummy.next;
+    
     }
+    
+    // TC: O(n) + O(n) + O(n) = O(n)
+    // SC: O(1)
 }
